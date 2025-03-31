@@ -24,6 +24,10 @@ const Tour = sequelize.define("Tour", {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    remaining_quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     adult_price: {
         type: DataTypes.DECIMAL(12, 2),
         allowNull: false
@@ -41,6 +45,10 @@ const Tour = sequelize.define("Tour", {
         allowNull: false
     },
     description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    depart: {
         type: DataTypes.TEXT,
         allowNull: true
     },

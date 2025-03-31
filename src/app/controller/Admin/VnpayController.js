@@ -1,79 +1,3 @@
-npm install sequelize mysql2
-=> Kết nối mysql
-
-npm install --save-dev nodemon
-=> cài đặt nodemon
-
-
-npm install jsonwebtoken 
-=> Dùng để tạo JWT
-
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-=> tạo key
-
-token = header.payload.signnature
-
-signnature: có callback là hàm async, có thể set ExpridIn verify
-
-data + secert (signnature ) => token
-token + secert ( verify ) => data
-mọi token đều có thời gian sống riêng, khi tạo ra token chúng ta có thể hủy được token đó
-
-
-npm install bcryptjs  
-=> Hash & kiểm tra mật khẩu
-npm install dotenv  
-=> Load biến môi trường
-
-npm install cors
-
-npm install multer
-=> upload ảnh
-
-npm install cookie-parser
-
-npm install nodemailer
-=> Gửi mail
-
-
-npm install bull 
-
-npm install redis
-
-node src/app/service/emailService.js => kiểm tra hàng đợi 
-
-C:\Users\NITRO 5>redis-server --port 6380
-[5784] 30 Mar 22:04:33.480 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-[5784] 30 Mar 22:04:33.480 # Redis version=5.0.14.1, bits=64, commit=ec77f72d, modified=0, pid=5784, just started
-[5784] 30 Mar 22:04:33.480 # Configuration loaded
-                _._
-           _.-``__ ''-._
-      _.-``    `.  `_.  ''-._           Redis 5.0.14.1 (ec77f72d/0) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._
- (    '      ,       .-`  | `,    )     Running in standalone mode
- |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6380
- |    `-._   `._    /     _.-'    |     PID: 5784
-  `-._    `-._  `-./  _.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |           http://redis.io
-  `-._    `-._`-.__.-'_.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |
-  `-._    `-._`-.__.-'_.-'    _.-'
-      `-._    `-.__.-'    _.-'
-          `-._        _.-'
-              `-.__.-'
-
-[5784] 30 Mar 22:04:33.484 # Server initialized
-[5784] 30 Mar 22:04:33.484 * Ready to accept connections
-
-
-
-npm install qrcode
-=> Tạo mã qr
-
-
-
 require('dotenv').config(); // Load biến môi trường từ .env
 const crypto = require('crypto');
 const moment = require('moment');
@@ -228,7 +152,7 @@ class VnpayController {
                     if (!booking) {
                         console.error(`Không tìm thấy booking với ID: ${bookingId}`);
                     } else {
-                        const user = await User(booking.user_id)
+                        const user = await User.findByPk(booking.user_id)
                         console.log(user)
                         const tour = await Tour.findByPk(tourId)
                         console.log(tour)

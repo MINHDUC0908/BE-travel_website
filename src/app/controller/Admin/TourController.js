@@ -1,4 +1,4 @@
-const { Tour, Image, Schedule } = require("../../model");
+const { Tour, Image, Schedule, TourCategory } = require("../../model");
 
 const createUploader = require("../../../upload/upload");
 const path = require("path")
@@ -100,6 +100,9 @@ class TourController {
                     },
                     {
                         model: Image,
+                    },
+                    {
+                        model: TourCategory
                     }
                 ],
             });            
@@ -137,6 +140,7 @@ class TourController {
                 departure_date: req.body.departure_date || tour.departure_date,
                 end_date: req.body.end_date || tour.end_date,
                 description: req.body.description || tour.description,
+                category_id: req.body.category_id || tour.category_id
             });
             const updatedTour = await Tour.findByPk(id, { include: [Image, Schedule] });
 

@@ -7,6 +7,12 @@ const sequelize = require("./config/db"); // Kết nối MySQL
 const { syncDatabase } = require("./app/model"); // Đồng bộ database
 const router = require("./router"); // Import router
 const upload = require("./upload/upload"); // Import multer để upload file
+const axios       = require('axios').default;
+const CryptoJS    = require('crypto-js'); 
+const moment      = require('moment');
+require("dotenv").config();
+require('./queues/emailQueue'); // Khởi động hàng đợi email
+
 
 const app = express();
 const PORT = 3000;
@@ -28,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public")); 
 app.use("/image/tour", express.static(path.join(__dirname, "public/image/tour")));
 app.use("/image/tourCategory", express.static(path.join(__dirname, "public/image/tourCategory")));
+app.use("/image/qrcodes", express.static(path.join(__dirname, "public/image/qrcodes")));
 console.log("📂 Serving static files from:", path.join(__dirname, "public/image/tour"));
 
 // 4️⃣ Kết nối Database
@@ -45,7 +52,8 @@ app.listen(PORT, () => {
     console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
 });
 
-
+// const sendMail = require("./mail/mailer");
+// sendMail("duclvm.23itb@vku.udn.vn", "Hello!", "This is a test email.");
 app.get("/check-cookie", (req, res) => {
     console.log("Cookies received:", req.cookies); // Log toàn bộ cookies nhận được
     if (req.cookies.refreshToken) {

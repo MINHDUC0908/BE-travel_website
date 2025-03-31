@@ -5,25 +5,41 @@ const jwt = require("jsonwebtoken");
 class AuthController {
     async register(req, res) {
         try {
-            const { name, email, password } = req.body;
-
-            if (!email) {
+            const { name, email, password, confirmPassword } = req.body;
+            
+            // Kiểm tra dữ liệu đầu vào
+            if (!email)
+            {
                 return res.status(400).json({ message: "Email không được để trống!" });
             }
             
+            if (!password) 
+            {
+                return res.status(400).json({ message: "Mật khẩu không được để trống!" });
+            }
+            
+            // Kiểm tra xác nhận mật khẩu
+            if (password !== confirmPassword) 
+            {
+                return res.status(400).json({ message: "Mật khẩu nhập lại không khớp!" });
+            }
+            
+            // Kiểm tra email đã tồn tại chưa
             const isEmail = await User.findOne({ where: { email } });
             if (isEmail) {
                 return res.status(400).json({ message: "Email đã tồn tại trong hệ thống!" });
             }
-
-            // Không cần hash mật khẩu ở đây, vì đã có hook beforeCreate trong model
+            
+            // Tạo user mới (chỉ truyền các trường cần thiết)
             const user = await User.create({
                 name,
                 email,
                 password
+                // Không cần truyền confirmPassword vào database
             });
-
+            
             return res.status(201).json({
+                success: true,
                 message: "Đăng kí tài khoản thành công",
                 data: {
                     id: user.id,
@@ -31,10 +47,9 @@ class AuthController {
                     email: user.email
                 }
             });
-
         } catch (error) {
             console.error("Lỗi đăng kí:", error);
-            res.status(500).json({ message: "Lỗi server!" });
+            return res.status(500).json({ message: "Lỗi server!" });
         }
     }
 
@@ -78,7 +93,7 @@ class AuthController {
             res.json({
                 message: "Đăng nhập thành công!",
                 accessToken,
-                data: { id: user.id, name: user.name, email: user.email }
+                data: { id: user.id, name: user.name, email: user.email, role: user.role }
             });
 
         } catch (error) {
