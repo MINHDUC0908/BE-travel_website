@@ -1,5 +1,7 @@
-const { Tour, Booking, BookingDetail, Image, TourCategory, Schedule, Payment } = require("../model");
 const sequelize = require("../../config/db");
+const { Tour, Booking, BookingDetail, Image, TourCategory, Schedule, Payment } = require("../model");
+const User = require("../model/User");
+
 const PaymentService = require("./PaymentService");
 const ZalopayService = require("./ZalopayService");
 
@@ -104,13 +106,29 @@ class TourBookingService {
                     message: `Chỉ còn ${tour.remaining_quantity} chỗ trống, vui lòng giảm số lượng hoặc chọn tour khác.`
                 };
             }
-    
+            if (payment_method === "offline" && totalGuests > 2) {
+                await transaction.rollback();
+                return {
+                    success: false,
+                    message: "Phương thức thanh toán offline chỉ áp dụng cho tối đa 2 khách. Vui lòng chọn thanh toán online nếu có nhiều hơn 2 khách."
+                };
+            }
+            const user = await User.findByPk(user_id)
+            console.log(user)
+            if (payment_method === "offline" && !user.isVerified)
+            {
+                await transaction.rollback()
+                return {
+                    message: "Bạn cần xác thực tài khoản khi thanh toán offline!!!"
+                }
+            }
             const totalPrice = (adult_count * tour.adult_price) + (child_count * tour.child_price);
             
             // Tạo booking
             const booking = await Booking.create({
                 user_id,
                 total_price: totalPrice,
+                tour_code: "TOUR_" + Math.floor(Math.random() * 1000000),
                 status: "pending",
                 payment_status: "unpaid"
             }, { transaction });
@@ -139,7 +157,8 @@ class TourBookingService {
                 booking_id: booking.id,
                 total_price: totalPrice,
                 tour_id: tour_id,
-                tour: tour
+                tour: tour,
+                tour_code: booking.tour_code
             };
         } catch (error) {
             console.log("Lỗi trong backend:", error);

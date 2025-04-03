@@ -1,5 +1,5 @@
 const { emailQueue } = require('../config/redis');
-const sendEmail = require('../mail/mailer');
+const { sendEmail } = require('../mail/mailer');
 
 emailQueue.process(async (job) => {
     const { to, subject, text, qrCodePath } = job.data;

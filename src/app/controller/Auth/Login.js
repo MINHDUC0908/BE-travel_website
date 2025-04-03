@@ -1,6 +1,8 @@
 const User = require("../../model/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const { sendVerificationEmail } = require("../../../mail/mailer")
 
 class AuthController {
     async register(req, res) {
@@ -30,14 +32,16 @@ class AuthController {
                 return res.status(400).json({ message: "Email đã tồn tại trong hệ thống!" });
             }
             
+            const verificationToken  = crypto.randomBytes(32).toString("hex")
             // Tạo user mới (chỉ truyền các trường cần thiết)
             const user = await User.create({
                 name,
                 email,
-                password
-                // Không cần truyền confirmPassword vào database
+                password,
+                verificationToken: verificationToken
             });
             
+            await sendVerificationEmail(email, verificationToken)
             return res.status(201).json({
                 success: true,
                 message: "Đăng kí tài khoản thành công",

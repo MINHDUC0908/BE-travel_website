@@ -6,13 +6,9 @@ const cookieParser = require("cookie-parser"); // Import cookie-parser
 const sequelize = require("./config/db"); // Kết nối MySQL
 const { syncDatabase } = require("./app/model"); // Đồng bộ database
 const router = require("./router"); // Import router
-const upload = require("./upload/upload"); // Import multer để upload file
-const axios       = require('axios').default;
-const CryptoJS    = require('crypto-js'); 
-const moment      = require('moment');
 require("dotenv").config();
 require('./queues/emailQueue'); // Khởi động hàng đợi email
-
+require('./app/cronJobs/cronJobs'); // Khởi động cron job
 
 const app = express();
 const PORT = 3000;

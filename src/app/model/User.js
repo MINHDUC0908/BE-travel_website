@@ -32,7 +32,15 @@ const User = sequelize.define("User", {
         type: DataTypes.ENUM('admin', 'user'),
         allowNull: false,
         defaultValue: 'user'
-    }
+    },
+    isVerified: {  // Trường này dùng để kiểm tra người dùng đã xác thực email hay chưa
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    verificationToken: { 
+        type: DataTypes.STRING, 
+        allowNull: true 
+    },
 }, {
     tableName: "users",
     timestamps: true,

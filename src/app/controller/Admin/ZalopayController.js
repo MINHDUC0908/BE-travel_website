@@ -115,9 +115,19 @@ class ZalopayController {
                     console.log(user);
                     
                     await Booking.destroy({ where: { id: booking_id } });
-                    await sendEmailQueue(user.email, "Xác nhận đặt tour", `
-                        Thanh toán thất bại
-                    `);
+                    await sendEmailQueue(
+                        user.email, 
+                        "Xác nhận đặt tour", 
+                        `
+                        <p>Xin chào ${user.name},</p>
+                        <p>Chúng tôi rất tiếc thông báo rằng giao dịch thanh toán cho đơn đặt tour của bạn đã <b>không thành công</b>.</p>
+                        <p>Vui lòng kiểm tra lại phương thức thanh toán hoặc thử lại sau.</p>
+                        <p>Nếu bạn cần hỗ trợ, vui lòng liên hệ với chúng tôi qua <a href="mailto:support@example.com">support@example.com</a>.</p>
+                        <br>
+                        <p>Trân trọng,</p>
+                        <p>Đội ngũ hỗ trợ</p>
+                        `
+                    );                    
                     return res.redirect(`http://localhost:5173/payment-failed?id=${tour_id}`);
                 } catch (error) {
                     console.error('Lỗi khi xóa booking:', error.message);

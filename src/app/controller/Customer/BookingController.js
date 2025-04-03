@@ -21,14 +21,21 @@ class BookingController {
                 payment_method,
                 req: req
             });
-            console.log(bookingResult.tour)
             if (!bookingResult.success) {
                 return res.status(400).json({
                     success: false,
                     message: bookingResult.message,  // Chuyển message từ bookingResult
                 });
             }
-    
+            if (payment_method === "offline")
+            {
+                if (adults + children > 2)
+                {
+                    return res.json({
+                        message: "Phương thức thanh toán offline chỉ áp dụng cho tối đa 2 khách. Vui lòng chọn thanh toán online nếu có nhiều hơn 2 khách."
+                    })
+                }
+            }
             // 2. VNPay
             let paymentUrl = null;
             if (payment_method === "online") {
@@ -116,7 +123,7 @@ class BookingController {
 
                         <p style="font-size: 16px; color: red; font-weight: bold;">🛑 Lưu ý quan trọng:</p>
                         <p style="font-size: 16px; color: #333;">
-                            Vui lòng thanh toán trực tiếp tại văn phòng trước ngày khởi hành để hoàn tất thủ tục.<br>
+                            Vui lòng thanh toán trực tiếp tại văn phòng trước ngày khởi hành 48h để hoàn tất thủ tục với mã đơn hàng ${bookingResult.tour_code}.<br>
                             Nếu không thanh toán trước hạn, đơn hàng có thể bị <b>hủy tự động</b>.
                         </p>
 

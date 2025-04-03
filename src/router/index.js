@@ -4,7 +4,7 @@ const imageRouterAdmin = require("../router/Admin/ImageRouer")
 const scheduleRouterAdmin = require("../router/Admin/ScheduleRouter")
 const userRouterAdmin = require("../router/Admin/UserRouter")
 const tourcategoriesAdmin = require("../router/Admin/TourCategoryRouter")
-
+const bookingRouterAdmin = require("../router/Admin/BookingRouter")
 const vnpayController = require("./Admin/VnpayRouter")
 const zalopayController = require("./Admin/ZalopayRouter")
 
@@ -28,7 +28,7 @@ function router(app) {
     app.use('/api/admin/tour', authMiddleware, authorizeAdmin, tourRouterAdmin)
     app.use('/api/admin/image', authMiddleware, authorizeAdmin, imageRouterAdmin)
     app.use('/api/admin/schedule', authMiddleware, authorizeAdmin, scheduleRouterAdmin)
-
+    app.use("/api/admin/booking", authMiddleware, authorizeAdmin, bookingRouterAdmin)
     app.use("/api/vnpay", vnpayController)
     app.use("/api/zalopay", zalopayController)
 }

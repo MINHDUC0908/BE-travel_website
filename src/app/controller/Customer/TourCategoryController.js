@@ -1,4 +1,4 @@
-const { TourCategory } = require("../../model");
+const { TourCategory, Tour } = require("../../model");
 
 
 class TourCategoryController
@@ -6,7 +6,13 @@ class TourCategoryController
     async index(req, res)
     {
         try {
-            const tourCategories = await TourCategory.findAll({})
+            const tourCategories = await TourCategory.findAll({
+                include: [
+                    {
+                        model: Tour
+                    }
+                ]
+            })
             res.json({
                 success: true,
                 data: tourCategories

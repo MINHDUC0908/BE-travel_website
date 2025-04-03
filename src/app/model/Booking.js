@@ -27,6 +27,10 @@ const Booking = sequelize.define("Booking", {
     payment_status: {
         type: DataTypes.ENUM("unpaid", "paid", "failed"),
         defaultValue: "unpaid"
+    },
+    tour_code: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 }, {
     timestamps: true

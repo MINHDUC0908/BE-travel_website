@@ -41,4 +41,25 @@ const sendEmail = async (to, subject, text, attachmentPath) => {
     }
 };
 
-module.exports = sendEmail;
+// Hàm gửi email xác thực
+const sendVerificationEmail = async (to, verificationToken) => {
+    try {
+        const mailOptions = {
+            from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
+            to: to,
+            subject: 'Xác thực email của bạn',
+            html: `
+                <p>Vui lòng nhấp vào liên kết dưới đây để xác thực email của bạn:</p>
+                <a href="http://localhost:5173/verify-email/${verificationToken}">Xác thực email</a>
+            `
+        };
+        console.log("Gửi mail thành công!!!")
+        // Gửi email
+        const info = await transporter.sendMail(mailOptions);
+        console.log("✅ Verification email sent successfully: " + info.messageId);
+    } catch (error) {
+        console.error("❌ Error sending verification email:", error);
+        throw error;
+    }
+};
+module.exports = { sendEmail, sendVerificationEmail };

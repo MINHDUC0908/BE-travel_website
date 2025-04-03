@@ -142,10 +142,6 @@ class VnpayController {
             const bookingId = txnRef.split('_')[0].replace('BOOK', '');
             const tourId = orderInfo.split('Tour: ')[1]; // Trích xuất tour_id từ OrderInfo
             
-    
-            console.log("Mã đơn hàng:", txnRef);
-            console.log("Booking ID:", bookingId);
-            console.log("Tour ID:", tourId);
             if (paymentStatus) {
                 try {
                     const booking = await Booking.findByPk(bookingId);
@@ -153,9 +149,8 @@ class VnpayController {
                         console.error(`Không tìm thấy booking với ID: ${bookingId}`);
                     } else {
                         const user = await User.findByPk(booking.user_id)
-                        console.log(user)
+
                         const tour = await Tour.findByPk(tourId)
-                        console.log(tour)
                         // Cập nhật trạng thái thanh toán thành công
                         await Booking.update(
                             {
@@ -191,7 +186,7 @@ class VnpayController {
                                         </tr>
                                         <tr>
                                             <td style="padding: 10px; border: 1px solid #ddd;"><b>Tổng tiền:</b></td>
-                                            <td style="padding: 10px; border: 1px solid #ddd;">${booking.total_price} VND</td>
+                                            <td style="padding: 10px; border: 1px solid #ddd;">${booking.total_price.toLocaleString()} VND</td>
                                         </tr>
                                         <tr>
                                             <td style="padding: 10px; border: 1px solid #ddd;"><b>Trạng thái thanh toán:</b></td>
@@ -224,7 +219,6 @@ class VnpayController {
                 try {
                     const booking = await Booking.findByPk(bookingId)
                     const user = await User.findByPk(booking.user_id)
-                    console.log(user)
 
                     await Booking.destroy({ where: { id: bookingId } });
                     
