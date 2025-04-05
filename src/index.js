@@ -31,6 +31,7 @@ app.use(express.static("public"));
 app.use("/image/tour", express.static(path.join(__dirname, "public/image/tour")));
 app.use("/image/tourCategory", express.static(path.join(__dirname, "public/image/tourCategory")));
 app.use("/image/qrcodes", express.static(path.join(__dirname, "public/image/qrcodes")));
+app.use("/image/rating", express.static(path.join(__dirname, "public/image/rating")));
 console.log("📂 Serving static files from:", path.join(__dirname, "public/image/tour"));
 
 // 4️⃣ Kết nối Database

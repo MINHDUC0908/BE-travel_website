@@ -160,7 +160,7 @@ class TourController
                 // Tìm các category_id tương ứng với tên danh mục trong types
                 const categories = await TourCategory.findAll({
                     where: {
-                        category_name: { [Op.in]: types },
+                        category_name: { [Op.in]: types }, // Op.in được sử dụng để tìm tất cả các tên danh mục có trong mảng types.
                     },
                     attributes: ["id"],
                 });

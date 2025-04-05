@@ -12,6 +12,8 @@ const zalopayController = require("./Admin/ZalopayRouter")
 const tourRouterCustomer = require("../router/Customer/TourRouter")
 const bookingRouterCustomer = require("../router/Customer/BookingRouter")
 const tourCategoryRouterCustomer = require("../router/Customer/TourCategoryRouter")
+const ratingRouterCustomer = require("../router/Customer/RatingRouter")
+
 const authMiddleware = require("../middleware/authMiddleware");
 const authorizeAdmin = require("../middleware/checkAdmin")
 function router(app) {
@@ -21,6 +23,7 @@ function router(app) {
     app.use('/api/tour', tourRouterCustomer)
     app.use('/api/tourCategory', tourCategoryRouterCustomer)
     app.use('/api/booking',authMiddleware, bookingRouterCustomer)
+    app.use('/api/rating', ratingRouterCustomer)
     
     // Admin
     app.use('/api/user', userRouterAdmin);

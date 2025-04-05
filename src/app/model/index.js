@@ -6,6 +6,7 @@ const TourCategory = require("./TourCategory");
 const Booking = require("./Booking");
 const BookingDetail = require("./BookingDetail");
 const Payment = require("./Payment");
+const Rating = require("./Rating");
 
 const syncDatabase = async () => {
     try {
@@ -19,4 +20,4 @@ const syncDatabase = async () => {
     }
 };
 
-module.exports = { syncDatabase, Tour, Image, Schedule, TourCategory, Booking, BookingDetail, Payment };
+module.exports = { syncDatabase, Tour, Image, Schedule, TourCategory, Booking, BookingDetail, Payment, Rating };

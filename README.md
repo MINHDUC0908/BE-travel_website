@@ -41,6 +41,10 @@ npm install bull
 npm install redis
 
 
+npm install socket.io 
+
+=> chat socket
+
 node src/app/service/emailService.js => kiểm tra hàng đợi 
 
 C:\Users\NITRO 5>redis-server --port 6380
