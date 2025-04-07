@@ -5,5 +5,6 @@ const authMiddleware = require("../../middleware/authMiddleware");
 
 // Route lấy thông tin user (cần đăng nhập)
 router.get("/", authMiddleware, UserController.getUserInfo);
+router.get("/index", authMiddleware, UserController.index);
 
 module.exports = router;

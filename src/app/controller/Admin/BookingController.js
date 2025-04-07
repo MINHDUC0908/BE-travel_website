@@ -2,7 +2,6 @@ const { Booking, BookingDetail, Tour, Schedule, TourCategory, Image } = require(
 const User = require("../../model/User");
 const BookingService = require("../../service/BookingService");
 const { sendEmailQueue } = require("../../service/emailService");
-const TourBookingService = require("../../service/TourBookingService");
 
 class BookingController {
     async index(req, res) {
@@ -44,9 +43,14 @@ class BookingController {
                 data: bookings
             });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Lỗi server!" });
-        }
+            console.error("Lỗi khi lấy danh sách bookings:", error); // Log rõ lỗi ra console
+        
+            res.status(500).json({
+                success: false,
+                message: "Đã xảy ra lỗi trong quá trình lấy danh sách bookings.",
+                error: error.message // Ghi rõ lỗi ra client
+            });
+        }        
     }
 
     async payment_confirmation(req, res) 

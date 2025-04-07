@@ -1,4 +1,5 @@
-const { emailQueue } = require('../config/redis');
+const { emailQueue, contactQueue, contactRepQueue } = require('../config/redis');
+const { contactReplie, contact} = require('../mail/contactMail');
 const { sendEmail } = require('../mail/mailer');
 
 emailQueue.process(async (job) => {
@@ -12,4 +13,28 @@ emailQueue.process(async (job) => {
     }
 });
 
-module.exports = emailQueue;
+
+contactQueue.process(async (job) => {
+    const { name, email, phone, message } = job.data;
+
+    try {
+        // Gọi hàm gửi email thông báo liên hệ
+        await contact(name, email, phone, message);
+        console.log(`📧 Contact email sent to ${email}`);
+    } catch (error) {
+        console.log(`📧 Contact email sent to ${email}`);
+    }
+});
+
+
+contactRepQueue.process(async (job) => {
+    const { email, message } = job.data
+
+    try {
+        await contactReplie(email, message)
+        console.log(`📧 Contact email sent to ${email}`);
+    } catch (error) {
+        console.log(`📧 Contact email sent to ${email}`);
+    }
+})
+module.exports = { emailQueue, contactQueue, contactRepQueue };

@@ -35,12 +35,14 @@ class TourController {
                 destination: req.body.destination,
                 area: req.body.area,
                 quantity: req.body.quantity,
+                remaining_quantity: req.body.quantity,
                 adult_price: req.body.adult_price,
                 child_price: req.body.child_price,
                 departure_date: req.body.departure_date,
                 end_date: req.body.end_date,
+                depart: req.body.depart,
                 description: req.body.description,
-                category_id: 10
+                category_id: req.body.category_id
             });
 
             // Kiểm tra xem có file nào được upload không
@@ -74,15 +76,22 @@ class TourController {
                     activities: item.activities,
                 })
             );
-        const schedules = await Promise.all(schedulePromises);
+            const schedules = await Promise.all(schedulePromises);
+
+            const tours = await Tour.findByPk(tour.id, {
+                include: [
+                    {
+                        model: Image,
+                    },
+                    {
+                        model: Schedule,
+                    },
+                ],
+            })
             return res.status(200).json({
                 success: true,
                 message: "Thêm tour và ảnh thành công",
-                data: {
-                    tour,
-                    images,
-                    schedules
-                },
+                data: tours,
             });
         } catch (error) {
             console.error("Lỗi khi thêm tour và ảnh:", error);
@@ -128,7 +137,11 @@ class TourController {
             if (!tour) {
                 return res.status(404).json({ message: "Tour không tồn tại!" });
             }
-
+            const current = new Date();
+            const departureDate = new Date(tour.departure_date);
+            if ( current > departureDate) {
+                return res.status(400).json({ message: "Không thể cập nhật tour đã khởi hành!" });
+            }
             // Update tour information
             await tour.update({
                 tour_name: req.body.tour_name || tour.tour_name,

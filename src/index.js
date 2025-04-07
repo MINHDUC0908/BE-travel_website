@@ -9,6 +9,8 @@ const router = require("./router"); // Import router
 require("dotenv").config();
 require('./queues/emailQueue'); // Khởi động hàng đợi email
 require('./app/cronJobs/cronJobs'); // Khởi động cron job
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 const PORT = 3000;

@@ -2,7 +2,8 @@ const User = require("../../model/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const { sendVerificationEmail } = require("../../../mail/mailer")
+const { sendVerificationEmail } = require("../../../mail/mailer");
+const { getIo } = require("../../../config/socket");
 
 class AuthController {
     async register(req, res) {
@@ -94,6 +95,13 @@ class AuthController {
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
             });
 
+            // Gửi thông báo qua socket về trạng thái user
+            const io = getIo();
+            io.emit('userStatus', {
+                userId: user.id,
+                status: 'online'
+            });
+
             res.json({
                 message: "Đăng nhập thành công!",
                 accessToken,
@@ -143,6 +151,14 @@ class AuthController {
 
     async logout(req, res) {
         try {
+            const userId = req.user.id; // Lấy từ middleware auth
+            const io = getIo();
+            
+            io.emit('userStatus', {
+                userId,
+                status: 'offline'
+            });
+
             // Xóa cookie chứa refreshToken
             res.clearCookie("refreshToken", {
                 httpOnly: true,
