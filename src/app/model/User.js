@@ -19,6 +19,18 @@ const User = sequelize.define("User", {
             isEmail: true, // Kiểm tra định dạng email
         },
     },
+    image_url: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    address: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    phone: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     password: {
         type: DataTypes.STRING,
         allowNull: false,

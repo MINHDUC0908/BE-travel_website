@@ -11,9 +11,13 @@ require('./queues/emailQueue'); // Khởi động hàng đợi email
 require('./app/cronJobs/cronJobs'); // Khởi động cron job
 const dotenv = require('dotenv');
 dotenv.config();
-
+const http = require('http');
+const initializeSocket = require("./config/socket");
 const app = express();
 const PORT = 3000;
+
+const server = http.createServer(app); // Tạo server HTTP từ Express
+const io = initializeSocket(server); // Khởi tạo socket.io
 
 // Cấu hình body-parser để xử lý request lớn
 app.use(express.json({ limit: "50mb" }));
@@ -34,7 +38,8 @@ app.use("/image/tour", express.static(path.join(__dirname, "public/image/tour"))
 app.use("/image/tourCategory", express.static(path.join(__dirname, "public/image/tourCategory")));
 app.use("/image/qrcodes", express.static(path.join(__dirname, "public/image/qrcodes")));
 app.use("/image/rating", express.static(path.join(__dirname, "public/image/rating")));
-console.log("📂 Serving static files from:", path.join(__dirname, "public/image/tour"));
+app.use("/image/profileCustomer", express.static(path.join(__dirname, "public/image/profileCustomer")));
+
 
 // 4️⃣ Kết nối Database
 sequelize.sync({ force: false }) // force: false để tránh mất dữ liệu
@@ -47,7 +52,7 @@ syncDatabase(); // Chạy hàm đồng bộ database nếu cần
 router(app);
 
 // 6️⃣ Chạy server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
 });
 
