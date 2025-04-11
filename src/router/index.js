@@ -21,6 +21,7 @@ const ratingRouterCustomer = require("../router/Customer/RatingRouter")
 const contactRouterCustomer = require("../router/Customer/ContactRouter")
 const chatBoxRouter = require("../router/Customer/ChatBotRouter")
 const profileRouter = require("../router/Customer/ProflieRouter")
+const favoriteRouter = require("../router/Customer/FavoriteRouter")
 
 const authMiddleware = require("../middleware/authMiddleware");
 const authorizeAdmin = require("../middleware/checkAdmin")
@@ -35,6 +36,8 @@ function router(app) {
     app.use('/api/contact', contactRouterCustomer)
     app.use('/api/chatbox', chatBoxRouter)
     app.use('/api/profile', authMiddleware, profileRouter)
+    app.use('/api/favorite', authMiddleware, favoriteRouter)
+
 
     
     // Admin

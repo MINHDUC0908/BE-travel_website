@@ -31,6 +31,7 @@ npm install multer
 => upload ảnh
 
 npm install cookie-parser
+=> Lưu token vào cookie
 
 npm install nodemailer
 => Gửi mail
@@ -81,6 +82,10 @@ npm install qrcode
 npm install node-cron
 => Sử dụng node-cron để chạy một tác vụ định kỳ (ví dụ: mỗi giờ hoặc mỗi ngày) kiểm tra các đơn hàng offline chưa thanh toán và quá hạn.
 
+
+
+npm install passport passport-google-oauth20
+=> Đăng nhập bằng gg
 
 
 

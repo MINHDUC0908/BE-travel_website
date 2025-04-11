@@ -97,7 +97,7 @@ class AuthController {
             res.json({
                 message: "Đăng nhập thành công!",
                 accessToken,
-                data: { id: user.id, name: user.name, email: user.email, role: user.role }
+                data: { id: user.id, name: user.name, email: user.email, role: user.role, image_url: user.image_url },
             });
 
         } catch (error) {

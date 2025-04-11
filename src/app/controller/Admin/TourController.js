@@ -139,7 +139,8 @@ class TourController {
             }
             const current = new Date();
             const departureDate = new Date(tour.departure_date);
-            if ( current > departureDate) {
+            const endDate = new Date(tour.end_date);
+            if ( current > departureDate && current < endDate) {
                 return res.status(400).json({ message: "Không thể cập nhật tour đã khởi hành!" });
             }
             // Update tour information

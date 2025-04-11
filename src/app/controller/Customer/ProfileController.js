@@ -1,7 +1,7 @@
 const path = require("path");
 const createUploader = require("../../../upload/upload");
 const User = require("../../model/User");
-const { Booking, BookingDetail, Tour, Schedule, Image } = require("../../model");
+const { Booking, BookingDetail, Tour, Schedule, Image, Rating } = require("../../model");
 // Khởi tạo uploader với thư mục lưu ảnh
 const upload = createUploader(path.join(__dirname, "../../../public/image/profileCustomer"));
 
@@ -76,6 +76,38 @@ class ProfileController
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Lỗi server khi lấy danh sách booking', error });
+        }
+    }
+    async getComment(req, res)
+    {
+        try {
+            const userId = req.user.id; // Lấy từ middleware auth
+
+            const ratings = await Rating.findAll({
+                where: { user_id: userId },
+                include: [
+                    {
+                        model: Tour,
+                        include: [
+                            {
+                                model: Image,
+                            },
+                            {
+                                model: Schedule
+                            }
+                        ]
+                    }
+                ],
+                order: [['createdAt', 'DESC']], // Sắp xếp theo ngày tạo giảm dần
+            })
+
+            return res.json({
+                success: true,
+                message: "Lấy danh sách bình luận thành công",
+                data: ratings,
+            });
+        } catch (error) {
+            
         }
     }
 }

@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser"); // Import cookie-parser
 const sequelize = require("./config/db"); // Kết nối MySQL
+
 const { syncDatabase } = require("./app/model"); // Đồng bộ database
 const router = require("./router"); // Import router
 require("dotenv").config();
@@ -13,8 +14,13 @@ const dotenv = require('dotenv');
 dotenv.config();
 const http = require('http');
 const initializeSocket = require("./config/socket");
+const passport = require("./config/passport"); // Import passport để xác thực người dùng
 const app = express();
 const PORT = 3000;
+
+
+app.use(passport.initialize());
+
 
 const server = http.createServer(app); // Tạo server HTTP từ Express
 const io = initializeSocket(server); // Khởi tạo socket.io
@@ -66,3 +72,5 @@ app.get("/check-cookie", (req, res) => {
         res.json({ message: "Không có refreshToken" });
     }
 });
+
+
