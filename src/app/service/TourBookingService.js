@@ -59,7 +59,7 @@ class TourBookingService {
             };
         }
     }
-    static async createBookingService({ user_id, tour_id, adult_count, child_count, payment_method, req }) {
+    static async createBookingService({ user_id, tour_id, adult_count, child_count, payment_method }) {
         const transaction = await sequelize.transaction();
         try {
             // 🔒 Khóa hàng để đảm bảo chỉ có 1 người có thể đặt tour tại một thời điểm

@@ -1,162 +1,258 @@
+# 🚀 Express.js API – Setup và Ghi chú sử dụng
+
+## 📦 Các Package đã cài đặt
+
+### ✅ Kết nối Database (MySQL + Sequelize)
+```bash
 npm install sequelize mysql2
-=> Kết nối mysql
+```
+> Kết nối với MySQL sử dụng Sequelize.
 
+---
+
+### 🔁 Reload Server khi thay đổi mã
+```bash
 npm install --save-dev nodemon
-=> cài đặt nodemon
+```
 
+---
 
-npm install jsonwebtoken 
-=> Dùng để tạo JWT
+### 🔐 Xác thực và Bảo mật
+```bash
+npm install jsonwebtoken
+```
+> Tạo và xác thực JWT.
 
+```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-=> tạo key
+```
+> Tạo secret key để sử dụng trong JWT.
 
-<!-- token = header.payload.signnature
+```bash
+npm install bcryptjs
+```
+> Mã hoá mật khẩu và so sánh mật khẩu.
 
-signnature: có callback là hàm async, có thể set ExpridIn verify
+```bash
+npm install dotenv
+```
+> Quản lý biến môi trường.
 
-data + secert (signnature ) => token
-token + secert ( verify ) => data
-mọi token đều có thời gian sống riêng, khi tạo ra token chúng ta có thể hủy được token đó -->
-
-
-npm install bcryptjs  
-=> Hash & kiểm tra mật khẩu
-npm install dotenv  
-=> Load biến môi trường
-
-npm install cors
-
-npm install multer
-=> upload ảnh
-
+```bash
 npm install cookie-parser
-=> Lưu token vào cookie
+```
+> Lưu token vào cookie.
 
+---
+
+### 🌐 API & Giao tiếp
+```bash
+npm install cors
+```
+> Cho phép giao tiếp giữa frontend và backend.
+
+```bash
+npm install axios
+```
+> Gửi HTTP requests từ client.
+
+---
+
+### 📩 Gửi Email
+```bash
 npm install nodemailer
-=> Gửi mail
+```
 
+---
 
-npm install bull 
+### 📤 Upload Ảnh
+```bash
+npm install multer
+```
 
+---
+
+### 💬 Chat real-time với Socket
+```bash
+npm install socket.io
+```
+
+---
+
+### 📧 Hàng đợi gửi mail (Bull + Redis)
+```bash
+npm install bull
 npm install redis
+```
 
+> Redis khởi chạy với:
+```bash
+redis-server --port 6380
+```
 
-npm install socket.io 
+---
 
-=> chat socket
-
-node src/app/service/emailService.js => kiểm tra hàng đợi 
-
-C:\Users\NITRO 5>redis-server --port 6380
-[5784] 30 Mar 22:04:33.480 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-[5784] 30 Mar 22:04:33.480 # Redis version=5.0.14.1, bits=64, commit=ec77f72d, modified=0, pid=5784, just started
-[5784] 30 Mar 22:04:33.480 # Configuration loaded
-                _._
-           _.-``__ ''-._
-      _.-``    `.  `_.  ''-._           Redis 5.0.14.1 (ec77f72d/0) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._
- (    '      ,       .-`  | `,    )     Running in standalone mode
- |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6380
- |    `-._   `._    /     _.-'    |     PID: 5784
-  `-._    `-._  `-./  _.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |           http://redis.io
-  `-._    `-._`-.__.-'_.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |
-  `-._    `-._`-.__.-'_.-'    _.-'
-      `-._    `-.__.-'    _.-'
-          `-._        _.-'
-              `-.__.-'
-
-[5784] 30 Mar 22:04:33.484 # Server initialized
-[5784] 30 Mar 22:04:33.484 * Ready to accept connections
-
-
-
-npm install qrcode
-=> Tạo mã qr
-
-
+### 📆 Tác vụ định kỳ
+```bash
 npm install node-cron
-=> Sử dụng node-cron để chạy một tác vụ định kỳ (ví dụ: mỗi giờ hoặc mỗi ngày) kiểm tra các đơn hàng offline chưa thanh toán và quá hạn.
+```
+> Dùng để chạy tự động kiểm tra đơn hàng chưa thanh toán hoặc hết hạn.
 
+---
 
+### 📦 QR Code
+```bash
+npm install qrcode
+```
 
+---
+
+### 🔐 Xác thực bằng Google
+```bash
 npm install passport passport-google-oauth20
-=> Đăng nhập bằng gg
+```
 
+---
 
+## 🧱 Sequelize – Thao tác CRUD
 
+### 🔹 Tạo dữ liệu (Create)
+```js
+const newUser = await User.create({
+  username: "john_doe",
+  email: "john@example.com",
+  password: "123456",
+});
+console.log(newUser.toJSON());
+```
 
-4. Thao tác CRUD với Sequelize
+### 🔹 Đọc dữ liệu (Read)
+```js
+const users = await User.findAll();
+console.log(users.map(user => user.toJSON()));
+```
 
-4.1. Tạo dữ liệu (CREATE)
+---
 
-    const newUser = await User.create({
-        username: "john_doe",
-        email: "john@example.com",
-        password: "123456",
-    });
-    console.log(newUser.toJSON());
+## 🔗 Quan hệ giữa các Model
 
-4.2. Lấy dữ liệu (READ)
+### 🔸 One-to-One
+```js
+User.hasOne(Profile);
+Profile.belongsTo(User);
+```
 
-    const users = await User.findAll();
-    console.log(users.map(user => user.toJSON()));
+### 🔸 One-to-Many
+```js
+User.hasMany(Post);
+Post.belongsTo(User);
+```
 
-5. Quan hệ giữa các Model
+### 🔸 Many-to-Many
+```js
+Post.belongsToMany(Tag, { through: PostTag });
+Tag.belongsToMany(Post, { through: PostTag });
+```
 
-5.1. One-to-One (1-1)
-    User.hasOne(Profile);
-    Profile.belongsTo(User);
-5.2. One-to-Many (1-N)
-    User.hasMany(Post);
-    Post.belongsTo(User);
-5.3. Many-to-Many (N-N)
-    Post.belongsToMany(Tag, { through: PostTag });
-    Tag.belongsToMany(Post, { through: PostTag });
+---
 
-6. Các Query nâng cao trong Sequelize
+## 🔍 Các Query nâng cao trong Sequelize
 
-6.1. Điều kiện nâng cao
-    const users = await User.findAll({
-        where: {
-            [Op.or]: [{ username: "john_doe" }, { email: "john@example.com" }],
-        },
-    });
+### ✔️ Điều kiện nâng cao (OR)
+```js
+const users = await User.findAll({
+  where: {
+    [Op.or]: [{ username: "john_doe" }, { email: "john@example.com" }],
+  },
+});
+```
 
-6.2. Chọn cột cụ thể
-    const users = await User.findAll({ attributes: ["id", "username"] });
+### ✔️ Chọn cột cụ thể
+```js
+const users = await User.findAll({ attributes: ["id", "username"] });
+```
 
-6.3. Sắp xếp dữ liệu
-    const users = await User.findAll({ order: [["username", "ASC"]] });
+### ✔️ Sắp xếp dữ liệu
+```js
+const users = await User.findAll({ order: [["username", "ASC"]] });
+```
 
-6.4. Giới hạn và phân trang
-    const users = await User.findAll({ limit: 10, offset: 20 });
+### ✔️ Giới hạn và phân trang
+```js
+const users = await User.findAll({ limit: 10, offset: 20 });
+```
 
-6.5. Nhóm dữ liệu (GROUP BY)
-    const result = await Post.findAll({
-        attributes: ["userId", [sequelize.fn("COUNT", sequelize.col("id")), "postCount"]],
-        group: ["userId"],
-    });
+### ✔️ Nhóm dữ liệu (GROUP BY)
+```js
+const result = await Post.findAll({
+  attributes: ["userId", [sequelize.fn("COUNT", sequelize.col("id")), "postCount"]],
+  group: ["userId"],
+});
+```
 
-7. Sử dụng sequelize.fn với SQL Functions
+---
 
-7.1. Dùng SUM() để tính tổng
-    const totalRevenue = await Order.findAll({
-        attributes: [[sequelize.fn("SUM", sequelize.col("total_price")), "total_revenue"]],
-    });
+## 🧠 SQL Functions với `sequelize.fn`
 
-7.2. Đếm số lượng (COUNT())
-    const totalUsers = await User.findAll({
-        attributes: [[sequelize.fn("COUNT", sequelize.col("id")), "total_users"]],
-    });
+### 🔸 Tổng (SUM)
+```js
+const totalRevenue = await Order.findAll({
+  attributes: [[sequelize.fn("SUM", sequelize.col("total_price")), "total_revenue"]],
+});
+```
 
-7.3. Dùng DATEDIFF() để tính số ngày giữa hai cột
-    const result = await Tour.findAll({
-        attributes: [
-            [sequelize.fn("DATEDIFF", sequelize.col("end_date"), sequelize.col("departure_date")), "duration"],
-        ],
-    });
+### 🔸 Đếm (COUNT)
+```js
+const totalUsers = await User.findAll({
+  attributes: [[sequelize.fn("COUNT", sequelize.col("id")), "total_users"]],
+});
+```
+
+### 🔸 Tính số ngày giữa 2 cột (DATEDIFF)
+```js
+const result = await Tour.findAll({
+  attributes: [
+    [sequelize.fn("DATEDIFF", sequelize.col("end_date"), sequelize.col("departure_date")), "duration"],
+  ],
+});
+```
+
+---
+
+## 🧑‍💻 Giao diện quản trị viết bằng React
+
+### 📍 Giao diện Trang Tour
+![Giao diện Tour](public/tour.png)
+
+---
+
+### ➕ Giao diện Thêm Tour
+![Thêm Tour](public/addtour.png)  
+![Thêm Hình Ảnh](public/addimage.png)  
+![Thêm Lịch Trình](public/addschedule.png)
+
+---
+
+### 🔎 Giao diện Chi Tiết Tour
+![Chi Tiết Tour](public/showtour.png)  
+![Chi Tiết 2](public/showtour1.png)
+
+---
+
+### 📋 Giao diện Quản lí Booking Tour
+![Booking Tour](public/booktour.png)
+
+---
+
+### 👤 Giao diện Quản lí Người Dùng
+![Quản lí User](public/user.png)
+
+---
+
+### 📞 Giao diện Liên Hệ
+![Liên Hệ](public/contact.png)
+
+---
+
+### 💬 Giao diện Quản lí Tin Nhắn (Chat)
+![Chat](public/chat.png)
