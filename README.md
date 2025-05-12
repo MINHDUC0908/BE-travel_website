@@ -219,6 +219,218 @@ const result = await Tour.findAll({
 
 ---
 
+### Cơ sở dữ liệu 
+
+### 1. Bảng users
+
+``` sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    image_url VARCHAR(255),
+    address VARCHAR(255),
+    phone VARCHAR(255),
+    googleId VARCHAR(255),
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'user', 'support') NOT NULL DEFAULT 'user',
+    isVerified BOOLEAN DEFAULT FALSE,
+    verificationToken VARCHAR(255),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT unique_email UNIQUE (email)
+);
+```
+### 2. Bảng tourcategories
+
+```sql
+CREATE TABLE tour_categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(255) NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+```
+
+### 3. Bảng tours
+
+```sql
+CREATE TABLE tours (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tour_name VARCHAR(255) NOT NULL,
+    destination VARCHAR(255) NOT NULL,
+    area VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL,
+    remaining_quantity INT NOT NULL,
+    adult_price DECIMAL(12, 2) NOT NULL,
+    child_price DECIMAL(12, 2) NOT NULL,
+    departure_date DATETIME NOT NULL,
+    end_date DATETIME NOT NULL,
+    description TEXT,
+    depart TEXT,
+    category_id INT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES tour_categories(id) ON DELETE CASCADE
+);
+
+```
+
+### 4. Bảng images 
+
+```sql
+CREATE TABLE images (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tour_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE
+);
+
+```
+
+### 5. Bảng schedules
+
+```sql
+CREATE TABLE schedules (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tour_id INT NOT NULL,
+    day_number INT NOT NULL,
+    activities TEXT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE
+);
+
+```
+
+### 6. Bảng bookings
+```sql
+CREATE TABLE bookings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    total_price DECIMAL(12, 2) NOT NULL,
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+    payment_status ENUM('unpaid', 'paid', 'failed') DEFAULT 'unpaid',
+    tour_code VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+### 7. Bảng booking_details
+```sql
+CREATE TABLE booking_details (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    booking_id INT NOT NULL,
+    tour_id INT NOT NULL,
+    adults INT NOT NULL,
+    children INT NOT NULL,
+    total_price DECIMAL(12, 2) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+    FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE
+);
+```
+
+### 8. Bảng payments
+```sql
+CREATE TABLE payments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    booking_id INT NOT NULL,
+    amount DECIMAL(12, 2) NOT NULL,
+    payment_method ENUM('online', 'offline', 'zalopay') NOT NULL,
+    payment_status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
+    transaction_id VARCHAR(255),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+    CONSTRAINT unique_booking_id UNIQUE (booking_id)
+);
+
+```
+
+### 9. Bảng contacts
+
+```sql
+CREATE TABLE contacts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    phone VARCHAR(255),
+    isReplied BOOLEAN NOT NULL DEFAULT FALSE,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+### 10. Bảng contact_replies
+```sql
+CREATE TABLE contact_replies (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    contact_id INT NOT NULL,
+    user_id INT NOT NULL,
+    reply_message TEXT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+### 11. Bảng favorite_tours
+
+```sql
+CREATE TABLE favorite_tours (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    tour_id INT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_tour UNIQUE (user_id, tour_id)
+);
+```
+
+### 12. Bảng ratings
+```sql
+CREATE TABLE ratings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tour_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL,
+    comment TEXT,
+    image VARCHAR(255),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+###  13. Bảng messages
+```sql
+CREATE TABLE messages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    senderId INT NOT NULL,
+    recipientId INT,
+    message TEXT NOT NULL,
+    isRead BOOLEAN DEFAULT FALSE,
+    attachment VARCHAR(255),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (senderId) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (recipientId) REFERENCES users(id) ON DELETE SET NULL
+);
+```
+
 ## 🧑‍💻 Giao diện quản trị viết bằng React
 
 ### 📍 Giao diện Trang Tour
