@@ -29,7 +29,7 @@ class TourController {
     }
     async store(req, res) {
         try {
-            // Tạo tour mới
+            // 1. Tạo tour mới
             const tour = await Tour.create({
                 tour_name: req.body.tour_name,
                 destination: req.body.destination,
@@ -45,59 +45,62 @@ class TourController {
                 category_id: req.body.category_id
             });
 
-            // Kiểm tra xem có file nào được upload không
-            if (!req.files || req.files.length === 0) {
+            // 2. Kiểm tra ảnh
+            if (!req.files?.length) {
                 return res.status(400).json({ message: "Không có file nào được tải lên!" });
             }
 
-            // Lưu tất cả ảnh vào database
-            const imagePromises = req.files.map((file) =>
+            // 3. Lưu ảnh
+            const imagePromises = req.files.map(file =>
                 Image.create({
                     tour_id: tour.id,
                     image_url: `/image/tour/${file.filename}`,
                 })
             );
-            const images = await Promise.all(imagePromises);
+            await Promise.all(imagePromises);
+
+            // 4. Kiểm tra & parse itinerary
             if (!req.body.itinerary) {
                 return res.status(400).json({ message: "Không có lịch trình nào được gửi lên!" });
             }
-            // Parse itinerary từ JSON string thành mảng
-            const itinerary = JSON.parse(req.body.itinerary);
-            // Kiểm tra nếu itinerary không phải là mảng hoặc rỗng
-            if (!Array.isArray(itinerary) || itinerary.length === 0) {
-                return res.status(400).json({ message: "Lịch trình không hợp lệ hoặc rỗng!" });
+
+            let itinerary;
+            try {
+                itinerary = JSON.parse(req.body.itinerary);
+                if (!Array.isArray(itinerary) || itinerary.length === 0) {
+                    return res.status(400).json({ message: "Lịch trình không hợp lệ hoặc rỗng!" });
+                }
+            } catch (parseError) {
+                return res.status(400).json({ message: "Không parse được lịch trình!" });
             }
 
-            // Lưu từng ngày trong lịch trình vào database
-            const schedulePromises = itinerary.map((item) =>
+            // 5. Lưu lịch trình
+            const schedulePromises = itinerary.map(item =>
                 Schedule.create({
                     tour_id: tour.id,
                     day_number: item.day,
                     activities: item.activities,
                 })
             );
-            const schedules = await Promise.all(schedulePromises);
+            await Promise.all(schedulePromises);
 
-            const tours = await Tour.findByPk(tour.id, {
-                include: [
-                    {
-                        model: Image,
-                    },
-                    {
-                        model: Schedule,
-                    },
-                ],
-            })
+            // 6. Trả về dữ liệu đã include
+            const fullTour = await Tour.findByPk(tour.id, {
+                include: [Image, Schedule]
+            });
+
             return res.status(200).json({
                 success: true,
                 message: "Thêm tour và ảnh thành công",
-                data: tours,
+                data: fullTour,
             });
+
         } catch (error) {
-            console.error("Lỗi khi thêm tour và ảnh:", error);
-            res.status(500).json({ error: "Lỗi server!" });
+            console.error("Lỗi khi thêm tour:", error);
+            return res.status(500).json({ error: "Lỗi server!" });
         }
     }
+
     async show(req, res)
     {
         try {
