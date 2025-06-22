@@ -15,6 +15,8 @@ const TourCategory = sequelize.define("TourCategory", {
         type: DataTypes.STRING,
         allowNull: false
     }
-}, { timestamps: true });
+}, { 
+    tableName: "tourcategories", // Tên bảng trong database
+    timestamps: true });
 
 module.exports = TourCategory;
