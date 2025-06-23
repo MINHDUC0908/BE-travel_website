@@ -8,6 +8,7 @@ const sequelize = new Sequelize(
     {
         host: process.env.DB_HOST, // Lấy host từ .env
         dialect: process.env.DB_DIALECT, // Lấy loại database từ .env
+        dialect: 'mysql',
         logging: false, // Tắt log SQL trong console
     }
 );
